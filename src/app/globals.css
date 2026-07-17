@@ -1,197 +1,283 @@
 :root {
-  --bg-color: #f3f4f6;
-  --text-color: #1f2937;
+  --bg-color-base: #0f172a; /* 深藍黑色底 */
+  --text-color: #f8fafc;
+  --sidebar-bg: rgba(30, 41, 59, 0.7);
+  --chat-bg: rgba(15, 23, 42, 0.8);
   --primary-color: #3b82f6;
   --primary-hover: #2563eb;
-  --bot-msg-bg: #e5e7eb;
-  --user-msg-bg: #dbeafe;
-  --border-color: #d1d5db;
-  --control-bg: #ffffff;
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --bot-msg-bg: #1e293b;
+  --user-msg-bg: #2563eb;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-color);
   color: var(--text-color);
+  background-color: var(--bg-color-base);
+  min-height: 100vh;
+  overflow: hidden; /* 防止整個頁面滾動 */
+}
+
+/* 動態滑鼠追蹤背景 */
+.interactive-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* 讓滑鼠可以穿透點擊下方元素 */
+  z-index: -1;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(59, 130, 246, 0.15),
+    transparent 40%
+  );
+  transition: background 0.1s ease;
+}
+
+.layout-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* 左側邊欄 (Sidebar) */
+.sidebar {
+  width: 300px;
+  background: var(--sidebar-bg);
+  backdrop-filter: blur(12px);
+  border-right: var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.logo-area {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.logo-area h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  background: linear-gradient(to right, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.control-group {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-group label {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.custom-select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.2);
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-select:focus {
+  border-color: var(--primary-color);
+}
+.custom-select option {
+  background: #1e293b;
+  color: white;
+}
+
+.timer-display {
+  font-family: monospace;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin: 20px 0;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.action-btn {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  gap: 8px;
 }
 
-.app-container {
-  width: 100%;
-  max-width: 700px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  height: 85vh;
-}
-
-.header {
-  padding: 16px;
+.btn-primary {
   background: var(--primary-color);
   color: white;
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
-.controls-bar {
-  padding: 10px 16px;
-  background: var(--control-bg);
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-}
-
-.controls-bar select {
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: white;
-  cursor: pointer;
-}
-
-.timer {
-  font-family: monospace;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #b91c1c;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 6px 10px;
-  border-radius: 6px;
+.btn-danger {
+  background: var(--danger-color);
   color: white;
-  transition: background 0.2s;
 }
+.btn-danger:hover { background: var(--danger-hover); transform: translateY(-2px); }
 
-.icon-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  margin-top: auto; /* 推到最底下 */
+}
+.btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+
+/* 右側聊天主區 (Main Chat) */
+.main-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--chat-bg);
+  position: relative;
 }
 
 .chat-box {
   flex: 1;
-  padding: 16px;
+  padding: 32px 10%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  gap: 24px;
+}
+
+.message-row {
+  display: flex;
   gap: 16px;
+  max-width: 85%;
+}
+
+.message-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.message-row.interviewer {
+  align-self: flex-start;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  flex-shrink: 0;
 }
 
 .message {
-  padding: 12px 16px;
-  border-radius: 16px;
-  max-width: 85%;
-  line-height: 1.5;
+  padding: 16px 20px;
+  border-radius: 18px;
+  line-height: 1.6;
   word-wrap: break-word;
+  position: relative;
 }
 
-.message.user {
-  align-self: flex-end;
-  background-color: var(--user-msg-bg);
-  color: var(--text-color);
-  border-bottom-right-radius: 4px;
-}
-
-.message.interviewer {
-  align-self: flex-start;
+.message-row.interviewer .message {
   background-color: var(--bot-msg-bg);
-  color: var(--text-color);
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.message-row.user .message {
+  background-color: var(--user-msg-bg);
+  border-top-right-radius: 4px;
 }
 
 .speaker-btn {
   background: none;
   border: none;
   cursor: pointer;
-  float: right;
-  opacity: 0.5;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0.3;
   transition: opacity 0.2s;
+  font-size: 1.1rem;
 }
-.speaker-btn:hover {
-  opacity: 1;
-}
+.speaker-btn:hover { opacity: 1; }
 
 /* Markdown Styles */
-.markdown-body {
-  font-size: 0.95rem;
-}
-
-.markdown-body p { margin-top: 0; margin-bottom: 8px; }
+.markdown-body { font-size: 1rem; color: #f8fafc; }
+.markdown-body p { margin-top: 0; margin-bottom: 12px; }
 .markdown-body p:last-child { margin-bottom: 0; }
 .markdown-body pre {
-  background: #1f2937;
-  color: #f3f4f6;
-  padding: 10px;
+  background: rgba(0,0,0,0.3);
+  padding: 12px;
   border-radius: 8px;
   overflow-x: auto;
   font-family: monospace;
-  font-size: 0.85rem;
-  margin: 8px 0;
+  font-size: 0.9rem;
+  margin: 12px 0;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 .markdown-body code {
-  background: rgba(0,0,0,0.1);
-  padding: 2px 4px;
+  background: rgba(0,0,0,0.2);
+  padding: 2px 6px;
   border-radius: 4px;
   font-family: monospace;
 }
-.markdown-body ul, .markdown-body ol { margin-top: 0; padding-left: 20px; }
+.markdown-body ul, .markdown-body ol { margin-top: 0; padding-left: 24px; }
 
-.input-area {
-  display: flex;
-  padding: 16px;
-  border-top: 1px solid var(--border-color);
-  background: white;
-  align-items: center;
+
+/* 輸入區塊 (Input Area) */
+.input-container {
+  padding: 24px 10%;
+  background: linear-gradient(to top, rgba(15, 23, 42, 1) 50%, transparent);
 }
 
-.input-area input {
+.input-box {
+  display: flex;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 8px 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+}
+
+.input-box input {
   flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.05rem;
   padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1rem;
   outline: none;
 }
+.input-box input::placeholder { color: #64748b; }
 
-.input-area input:focus {
-  border-color: var(--primary-color);
-}
-
-.input-area button.send-btn {
-  margin-left: 12px;
-  padding: 12px 24px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.input-area button.send-btn:hover:not(:disabled) {
-  background-color: var(--primary-hover);
-}
-
-.input-area button:disabled {
-  opacity: 0.6;
+.input-box input:disabled {
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .voice-btn {
@@ -199,28 +285,45 @@ body {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  margin-left: 8px;
   padding: 8px;
   border-radius: 50%;
   transition: background 0.2s;
+  color: #94a3b8;
 }
-.voice-btn:hover {
-  background: #f3f4f6;
+.voice-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+.voice-btn.recording { color: var(--danger-color); animation: pulse 1.5s infinite; }
+
+.send-btn {
+  background: var(--primary-color);
+  border: none;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.2s;
 }
-.voice-btn.recording {
-  color: #dc2626;
-  animation: pulse 1.5s infinite;
-}
+.send-btn:hover:not(:disabled) { background: var(--primary-hover); }
+.send-btn:disabled { background: #475569; cursor: not-allowed; }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 .loading {
-  font-size: 0.9rem;
-  color: #6b7280;
+  font-size: 0.95rem;
+  color: #94a3b8;
   font-style: italic;
-  align-self: flex-start;
+  padding-left: 56px; /* 對齊頭像旁的文字 */
 }
+
+/* 捲軸美化 */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
