@@ -2,32 +2,34 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   try {
-    const { messages } = await request.json();
+    const { messages, roleContext } = await request.json();
 
-    // 取得您的 API Key (需設定在 .env.local 檔案中: NVIDIA_API_KEY)
     const apiKey = process.env.NVIDIA_API_KEY;
 
     if (!apiKey) {
-      return NextResponse.json(
-        { error: "伺服器未設定 NVIDIA_API_KEY 環境變數" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "伺服器未設定 NVIDIA_API_KEY 環境變數" }, { status: 500 });
     }
 
-    // 將前端傳來的使用者歷史對話，轉換為 Nvidia API 接受的格式
-    // 同時加入一條 System Prompt (設定面試官的人設)
+    // 動態 System Prompt
+    const defaultRole = "資深軟體工程師";
+    const currentRole = roleContext || defaultRole;
+    
+    const systemPrompt = `你現在是一位頂尖科技公司的「${currentRole}」面試官。
+請根據候選人的回答進行專業的追問。
+請遵守以下規則：
+1. 語氣要符合該職位的專業度，如果是嚴厲的面試官請給予高壓的提問。
+2. 一次只問一個問題，不要一口氣問太多。
+3. 適時針對候選人的回答給予簡短的回饋。
+4. 您可以使用 Markdown 語法來美化您的回覆，例如重點粗體或列點。`;
+
     const formattedMessages = [
-      {
-        role: "system",
-        content: "你是一位科技公司的資深軟體工程師，正在面試一位候選人。請根據他的回答進行專業的追問。語氣要專業但友善，一次只問一個問題，不要一口氣問太多。"
-      },
+      { role: "system", content: systemPrompt },
       ...messages.map(msg => ({
         role: msg.role === "interviewer" ? "assistant" : "user",
         content: msg.content
       }))
     ];
 
-    // 呼叫 Nvidia 開放 API (以 Llama 3 8B 為例，您可以依照文件替換模型名稱)
     const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -49,10 +51,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "Nvidia API 發生錯誤" }, { status: response.status });
     }
 
-    // 擷取 AI 的回覆文字
     const replyText = data.choices[0].message.content;
 
-    // 回傳給前端
     return NextResponse.json({ reply: replyText });
     
   } catch (error) {
