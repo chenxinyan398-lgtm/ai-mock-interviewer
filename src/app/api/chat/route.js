@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   try {
-    const { messages, roleContext, language } = await request.json();
+    const { messages, roleContext, language, resumeText, isSummary } = await request.json();
 
     const apiKey = process.env.NVIDIA_API_KEY;
 
@@ -23,7 +23,20 @@ export async function POST(request) {
     
     const targetLang = langMap[language] || langMap['zh-TW'];
     
-    const systemPrompt = `你現在是一位頂尖科技公司的「${currentRole}」面試官。
+    let systemPrompt = "";
+
+    if (isSummary) {
+      systemPrompt = `你現在是一位頂尖科技公司的「${currentRole}」面試官。
+面試已經結束，請根據候選人先前的回答歷史，給予一份專業的面試評分報告。
+請嚴格遵守以下規則：
+1. **語言限制：你必須完全使用「${targetLang}」來進行回覆。**
+2. 給予 0 到 100 分的綜合評分。
+3. 列出候選人的「強項 (Strengths)」。
+4. 列出候選人的「待加強處 (Weaknesses)」。
+5. 給予具體的「改善建議 (Actionable Feedback)」。
+6. 使用 Markdown 格式美化排版。`;
+    } else {
+      systemPrompt = `你現在是一位頂尖科技公司的「${currentRole}」面試官。
 請根據候選人的回答進行專業的追問。
 請嚴格遵守以下規則：
 1. **語言限制：你必須完全使用「${targetLang}」來進行提問與回覆。絕對不可以使用其他語言。**
@@ -31,6 +44,12 @@ export async function POST(request) {
 3. 一次只問一個問題，不要一口氣問太多。
 4. 適時針對候選人的回答給予簡短的回饋。
 5. 您可以使用 Markdown 語法來美化您的回覆，例如重點粗體或列點。`;
+
+      if (resumeText) {
+        // 取前 3000 字元避免超過 Token 限制
+        systemPrompt += `\n\n【候選人履歷資訊】\n以下是候選人的履歷內容，請盡量根據這些背景經驗來設計客製化的面試問題：\n${resumeText.substring(0, 3000)}`;
+      }
+    }
 
     const formattedMessages = [
       { role: "system", content: systemPrompt },

@@ -22,21 +22,57 @@ body {
   overflow: hidden; /* 防止整個頁面滾動 */
 }
 
-/* 動態滑鼠追蹤背景 */
-.interactive-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none; /* 讓滑鼠可以穿透點擊下方元素 */
-  z-index: -1;
-  background: radial-gradient(
-    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(59, 130, 246, 0.15),
-    transparent 40%
-  );
-  transition: background 0.1s ease;
+/* 1. 科技感 (Tech Cyber) */
+.layout-wrapper[data-theme="tech"] {
+  --bg-color-base: #0f172a;
+}
+
+/* 2. 生活感 (Cozy Life) */
+.layout-wrapper[data-theme="life"] {
+  --text-color: #3f3f46;
+  --sidebar-bg: rgba(250, 248, 245, 0.85);
+  --chat-bg: rgba(255, 255, 255, 0.9);
+  --bot-msg-bg: #f4f4f5;
+  --border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 3. 公司感 (Corporate Office) */
+.layout-wrapper[data-theme="corporate"] {
+  --text-color: #1e293b;
+  --sidebar-bg: rgba(226, 232, 240, 0.9);
+  --chat-bg: rgba(248, 250, 252, 0.95);
+  --bot-msg-bg: #e2e8f0;
+  --border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 4. 宇宙感 (Deep Universe - 黑洞特效) */
+.layout-wrapper[data-theme="universe"] {
+  --bg-color-base: #000000;
+  --sidebar-bg: rgba(0, 0, 0, 0.7);
+  --chat-bg: rgba(10, 10, 15, 0.8);
+}
+
+/* 5. 大自然感 (Wild Nature) */
+.layout-wrapper[data-theme="nature"] {
+  --sidebar-bg: rgba(20, 83, 45, 0.7);
+  --chat-bg: rgba(6, 78, 59, 0.8);
+  --bot-msg-bg: #064e3b;
+}
+
+/* 6. 大海感 (Deep Ocean) */
+.layout-wrapper[data-theme="ocean"] {
+  --sidebar-bg: rgba(8, 47, 73, 0.7);
+  --chat-bg: rgba(12, 74, 110, 0.8);
+  --bot-msg-bg: #082f49;
+}
+
+/* 7. 天空感 (Sky Bound) */
+.layout-wrapper[data-theme="sky"] {
+  --text-color: #0f172a;
+  --sidebar-bg: rgba(224, 242, 254, 0.85);
+  --chat-bg: rgba(255, 255, 255, 0.9);
+  --bot-msg-bg: #bae6fd;
+  --border-color: rgba(0, 0, 0, 0.1);
 }
 
 .layout-wrapper {
@@ -327,3 +363,116 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* 說話時的音波特效 */
+.avatar.speaking-glow {
+  border: 2px solid var(--primary-color);
+  animation: avatarPulse 0.8s infinite alternate;
+}
+
+@keyframes avatarPulse {
+  0% { transform: scale(1); box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.4); }
+  100% { transform: scale(1.15); box-shadow: 0 0 25px 10px rgba(59, 130, 246, 0.9); }
+}
+
+/* --- Modal & New Features Styles --- */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: var(--chat-bg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.summary-body {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.history-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.badge {
+  background: var(--primary-color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.sidebar-bottom-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-success {
+  background: #10b981;
+  color: white;
+}
+.btn-success:hover {
+  background: #059669;
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+}
+.upload-btn-wrapper .btn-outline {
+  width: 100%;
+}
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+}
